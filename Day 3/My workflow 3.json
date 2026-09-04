@@ -1,0 +1,257 @@
+{
+  "name": "My workflow 3",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        96
+      ],
+      "id": "9fa03aba-5470-4a20-9346-1207551e6b8f",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9e7284ff-4e94-497c-a03c-977f2400ab67",
+              "name": "Name",
+              "value": "Ali Ahmed",
+              "type": "string"
+            },
+            {
+              "id": "3f2ec213-17d8-47ed-9b12-9ebe05c90f69",
+              "name": "Email",
+              "value": "ali@gmail.com",
+              "type": "string"
+            },
+            {
+              "id": "fdcbfc64-8caa-481e-b933-1fe999e06cfb",
+              "name": "Department",
+              "value": "IT",
+              "type": "string"
+            },
+            {
+              "id": "70777004-90cc-4ef9-996e-a497a57973cf",
+              "name": "Score",
+              "value": 68,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        0,
+        -112
+      ],
+      "id": "21f84012-7572-49f2-b49f-2a76c1362d49",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "7b19f992-b517-48d6-9ab0-d69feb62cc17",
+              "leftValue": "={{$json.Score}}",
+              "rightValue": 80,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        208,
+        -112
+      ],
+      "id": "17c9192c-e8c3-488b-b503-957156a1f9b0",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f690ba0d-3f03-4fd8-932c-ce5af5b75678",
+              "leftValue": "={{$json.Score}}",
+              "rightValue": 60,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        416,
+        -16
+      ],
+      "id": "1734c1d2-08d5-4dee-a690-eebd89f8f2cb",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7caf1f0d-8f58-4a3d-9bf6-8d11664dbe20",
+              "name": "Classification",
+              "value": "Excellent",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        416,
+        -176
+      ],
+      "id": "b75016f7-89dd-4aea-8365-691fabf6dc1b",
+      "name": "Excellent"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5563b3ad-e1ee-4172-a166-4d7c3e7b0b82",
+              "name": "Classification",
+              "value": "Good",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        672,
+        -32
+      ],
+      "id": "1e976bac-1d3b-4132-b08a-684296423d86",
+      "name": "Good"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3fee6d9f-b929-4111-8a9d-ac4230ac5c59",
+              "name": "Classification",
+              "value": "Needs Improvement",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        624,
+        160
+      ],
+      "id": "7c96d062-0fd8-461e-aa2d-6594a1b581d8",
+      "name": "Needs Improvement"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Excellent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Good",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Needs Improvement",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "00d76617-63b1-4f60-b573-304e6aac287e",
+  "meta": {
+    "instanceId": "80d1f578d8c9a68fb391899ef88abb9fd67ddafabcaa2a21da3f2c22313514cb"
+  },
+  "nodeGroups": [],
+  "id": "pcuTTe41s0eEVU2M",
+  "tags": []
+}
