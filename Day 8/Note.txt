@@ -1,0 +1,1 @@
+Authentication: None. The Open-Meteo API used in this workflow is publicly accessible and does not require an API key.

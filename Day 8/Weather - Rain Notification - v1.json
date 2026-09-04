@@ -1,0 +1,217 @@
+{
+  "name": "Weather - Rain Notification - v1",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "382d8b06-972c-4b32-a353-2f049023fd2d",
+      "name": "Check Weather Schedule"
+    },
+    {
+      "parameters": {
+        "url": "https://api.open-meteo.com/v1/forecast",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "latitude",
+              "value": "41.8781"
+            },
+            {
+              "name": "longitude",
+              "value": "-87.6298"
+            },
+            {
+              "name": "daily",
+              "value": "precipitation_probability_max,precipitation_sum"
+            },
+            {
+              "name": "forecast days",
+              "value": "1"
+            },
+            {
+              "name": "timezone",
+              "value": "America/Chicago"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "01608bf8-dd3b-469d-a354-f27539415439",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "979c673f-de56-4714-b2e3-d62ec50d61f2",
+              "name": "=rain_probability",
+              "value": "={{ $json.daily.precipitation_probability_max[0] }}",
+              "type": "number"
+            },
+            {
+              "id": "ab3b2de3-c28a-4aa9-8732-0c25dd3398b2",
+              "name": "rain_amount",
+              "value": "={{ $json.daily.precipitation_sum[0] }}",
+              "type": "number"
+            },
+            {
+              "id": "52c7aad4-a11c-45bc-936e-8a92f8c859d1",
+              "name": "weather_date",
+              "value": "={{ $json.daily.time[0] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {
+          "ignoreConversionErrors": false
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        416,
+        0
+      ],
+      "id": "61dc498d-eded-4153-9d11-86faf11e6d38",
+      "name": "Extract Weather Data"
+    },
+    {
+      "parameters": {
+        "sendTo": "saadh0910@gmail.com",
+        "subject": "Weather Alert – Chicago",
+        "message": "=Good morning,\n\nHere is today's weather update for Chicago:\n\nDate: {{ $json.weather_date }}\nPrecipitation probability: {{ $json.rain_probability }}%\nExpected precipitation: {{ $json.rain_amount }} mm\n\nPlease check the weather conditions before heading out.\n\nWeather Notification Automation",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        832,
+        -96
+      ],
+      "id": "6bbca0bb-7b79-4e97-af1b-2cc13ff15262",
+      "name": "Send Weather Notification",
+      "webhookId": "4b794b4d-93ab-4794-ad33-47340f4030e7",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "A5Mi3RfORjbbGfYd",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "bcdbe907-ebcc-45de-9d04-f9cc8a9a816a",
+              "leftValue": "={{ $json.rain_probability }}",
+              "rightValue": 5,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        624,
+        0
+      ],
+      "id": "dc54625a-2372-4e75-8b81-bb755da17960",
+      "name": "Check Rain Condition"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Check Weather Schedule": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Extract Weather Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Weather Data": {
+      "main": [
+        [
+          {
+            "node": "Check Rain Condition",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Rain Condition": {
+      "main": [
+        [
+          {
+            "node": "Send Weather Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "6ead8820-e49e-4621-b108-96660bf1a7e7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "80d1f578d8c9a68fb391899ef88abb9fd67ddafabcaa2a21da3f2c22313514cb"
+  },
+  "nodeGroups": [],
+  "id": "wtWFeVz2GawcDrNc",
+  "tags": []
+}
