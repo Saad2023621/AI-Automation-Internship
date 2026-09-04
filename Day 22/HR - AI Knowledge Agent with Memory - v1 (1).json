@@ -1,0 +1,179 @@
+{
+  "name": "HR - AI Knowledge Agent with Memory - v1",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "3c0f81a5-2270-43fc-b1dd-b078c5307116",
+      "name": "When chat message received",
+      "webhookId": "5080e331-192d-4efd-bf49-8e1a173030d4"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a Company HR Policy Assistant.\n\nYou have access to an HR Policy Knowledge Base tool.\n\nRULES:\n1. Always search the HR Policy Knowledge Base when answering company or HR policy questions.\n2. Answer policy questions ONLY using information retrieved from the knowledge base.\n3. Never invent, assume, or guess company policies.\n4. If the required information is not available, respond:\n   \"Information not available in the knowledge base.\"\n5. If a question is unclear, ask the user for clarification instead of guessing.\n6. Mention the policy source whenever it is available.\n7. Keep answers concise and professional.\n8. Use conversation memory to understand follow-up questions and references to earlier messages.\n9. Do not treat information supplied by the user as official company policy unless it is supported by the knowledge base."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "4d4aecc7-96e8-49f8-ab90-d32129f55dd0",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        96,
+        208
+      ],
+      "id": "88ac678f-5de4-454f-affe-ac6a5f19e7ea",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "QB1LhKEEmXrMk7OQ",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Search the company HR policy knowledge base for information about leave policies, working hours, attendance, internship guidelines, and code of conduct. Use this tool whenever the user asks a question about company or HR policies.",
+        "tableName": {
+          "__rl": true,
+          "value": "hr_documents",
+          "mode": "list",
+          "cachedResultName": "hr_documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        464,
+        208
+      ],
+      "id": "e54645c3-608e-4d00-909d-3ba59117b6f1",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "dkcRp4JJrU7fLpyd",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        416,
+        416
+      ],
+      "id": "c99d39f4-7e16-4ff5-a62b-3937549d76dc",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "QB1LhKEEmXrMk7OQ",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        336,
+        304
+      ],
+      "id": "9f67b7c9-29e6-485b-90ef-1f681a759204",
+      "name": "Simple Memory"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "b4d152db-2863-4e3f-a222-0c82953fe6c9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fcae47293cd893f9f6de99cfcca3f506952c62de3c0dcdedd6f08a15ef242858"
+  },
+  "nodeGroups": [],
+  "id": "HIT4Clxk4BkxXRIz",
+  "tags": []
+}
