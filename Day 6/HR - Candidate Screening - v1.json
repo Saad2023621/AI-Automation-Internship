@@ -1,0 +1,868 @@
+{
+  "name": "HR - Candidate Screening - v1",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f92c3146-bf2b-40af-b157-de3279dfdb67",
+              "name": "=Result",
+              "value": "Shortlisted",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        448,
+        -160
+      ],
+      "id": "50000bef-e9a1-44bd-bc62-77cf526899f8",
+      "name": "Shortlisted"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "641806e6-110d-40e2-8408-3a45b2b13b2c",
+              "name": "Result",
+              "value": "Not Eligible",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        656,
+        112
+      ],
+      "id": "f1dbde87-23b0-4ff1-b751-8ab16f850630",
+      "name": "Not Eligible"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "087178a9-4e2f-462f-9abe-abc1cf1325df",
+              "name": "Result",
+              "value": "Needs Review",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        672,
+        -48
+      ],
+      "id": "0feedd3b-4a62-4ec6-92b2-fd6c75177aa0",
+      "name": "Needs Review"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -416,
+        -64
+      ],
+      "id": "413912e1-2da0-4116-90a8-e895f889939d",
+      "name": "Start Screening"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "18tk4-is0nAH-fANWtDo59rwSkH6rz36AobXwhbSN3c4",
+          "mode": "list",
+          "cachedResultName": "Candidate Screening",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18tk4-is0nAH-fANWtDo59rwSkH6rz36AobXwhbSN3c4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18tk4-is0nAH-fANWtDo59rwSkH6rz36AobXwhbSN3c4/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -208,
+        -64
+      ],
+      "id": "00a437e2-1c56-45d0-88cd-aafc8b3dad21",
+      "name": "Fetch Candidate Records",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "paXt80vdHoeR07GD",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5e5b548a-0609-4754-88db-ab43c987fac3",
+              "leftValue": "={{ $json.Name}}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "318336c1-50d9-4d2b-98dd-b68b77b08483",
+              "leftValue": "={{$json.Email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "59d07a4b-1fdd-4ff8-9113-5023d2d81755",
+              "leftValue": "={{ $json.Degree }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        0,
+        -64
+      ],
+      "id": "cbe94d47-eea2-4820-bd9b-ec4c3193589f",
+      "name": "Validate Required Information"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "54ddd4d4-6bbb-41b4-8773-85dad64dc29e",
+              "leftValue": "={{ $json.Experience }}",
+              "rightValue": 1,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            },
+            {
+              "id": "9eb8b97f-53a6-4ac8-bbaf-2756c680469b",
+              "leftValue": "={{ $json.Availability }}",
+              "rightValue": "Yes",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "8689a750-e6de-4efb-900c-72e34d81a862",
+              "leftValue": "={{ [\"Bs Data Science\", \"BS CS\", \"BS Software Engineering\"].includes($json.Degree) }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        208,
+        -160
+      ],
+      "id": "4805272e-81f2-4da7-8197-6a590aafca91",
+      "name": "Check Shortlist Eligibility"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "4a95551c-f869-432c-9bbb-ea4d02869505",
+              "leftValue": "={{ $json.Availability }}",
+              "rightValue": "Yes",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "fc2f5acd-3628-434e-ae90-53e51ffece92",
+              "leftValue": "={{ $json.Experience }}",
+              "rightValue": 1,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        448,
+        16
+      ],
+      "id": "5c3f4610-ea71-44cb-bc0b-59d651c42c15",
+      "name": "Check Review Eligibility"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "18tk4-is0nAH-fANWtDo59rwSkH6rz36AobXwhbSN3c4",
+          "mode": "list",
+          "cachedResultName": "Candidate Screening",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18tk4-is0nAH-fANWtDo59rwSkH6rz36AobXwhbSN3c4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18tk4-is0nAH-fANWtDo59rwSkH6rz36AobXwhbSN3c4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "Name"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Degree",
+              "displayName": "Degree",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Skills",
+              "displayName": "Skills",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Experience",
+              "displayName": "Experience",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Availability",
+              "displayName": "Availability",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Result",
+              "displayName": "Result",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        672,
+        -208
+      ],
+      "id": "c227f15c-3a59-4e60-8070-05a981cf3815",
+      "name": "Update Candidate Result",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "paXt80vdHoeR07GD",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "18tk4-is0nAH-fANWtDo59rwSkH6rz36AobXwhbSN3c4",
+          "mode": "list",
+          "cachedResultName": "Candidate Screening",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18tk4-is0nAH-fANWtDo59rwSkH6rz36AobXwhbSN3c4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18tk4-is0nAH-fANWtDo59rwSkH6rz36AobXwhbSN3c4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "Name"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Degree",
+              "displayName": "Degree",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Skills",
+              "displayName": "Skills",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Experience",
+              "displayName": "Experience",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Availability",
+              "displayName": "Availability",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Result",
+              "displayName": "Result",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        880,
+        -48
+      ],
+      "id": "f675fc09-93d3-40ac-a81a-af24e4b4c74e",
+      "name": "Update Candidate Result1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "paXt80vdHoeR07GD",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "18tk4-is0nAH-fANWtDo59rwSkH6rz36AobXwhbSN3c4",
+          "mode": "list",
+          "cachedResultName": "Candidate Screening",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18tk4-is0nAH-fANWtDo59rwSkH6rz36AobXwhbSN3c4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18tk4-is0nAH-fANWtDo59rwSkH6rz36AobXwhbSN3c4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "Name"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Degree",
+              "displayName": "Degree",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Skills",
+              "displayName": "Skills",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Experience",
+              "displayName": "Experience",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Availability",
+              "displayName": "Availability",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Result",
+              "displayName": "Result",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        864,
+        112
+      ],
+      "id": "1575679e-23e3-4066-8754-3b96c78cdeac",
+      "name": "Update Candidate Result2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "paXt80vdHoeR07GD",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.Email }}",
+        "subject": "Candidate Screening Result",
+        "message": "=Hello {{$json.Name}},  Congratulations!  You have been shortlisted for the internship.  We will contact you soon with the next steps.  Regards, HR Team",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        880,
+        -192
+      ],
+      "id": "0745120c-ef25-4942-be90-238205665d41",
+      "name": "Send Shortlisted Email",
+      "webhookId": "073f2aa6-bdc3-4894-ad1c-b54fb4d4e625",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "A5Mi3RfORjbbGfYd",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.Email }}",
+        "subject": "Candidate Screening Result",
+        "message": "=Hello {{$json.Name}},  Thank you for applying.  Your profile requires further review.  We will update you shortly.  Regards, HR Team",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1088,
+        -48
+      ],
+      "id": "2d88b354-0c52-43e9-8ccd-812037c3aed3",
+      "name": "Send Shortlisted Email1",
+      "webhookId": "0d93ed70-deaa-4024-8fe7-8b4c653cb2cd",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "A5Mi3RfORjbbGfYd",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.Email }}",
+        "subject": "Candidate Screening Result",
+        "message": "=Hello {{$json.Name}},  Thank you for your interest.  Unfortunately, your profile does not meet the current screening requirements.  We encourage you to apply again in the future.  Regards, HR Team",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1072,
+        112
+      ],
+      "id": "ec692bc8-9936-481b-9708-ae075359d07f",
+      "name": "Send Shortlisted Email2",
+      "webhookId": "a82aae98-6530-4a1b-b6c7-ae8e7acd626c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "A5Mi3RfORjbbGfYd",
+          "name": "Gmail account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Shortlisted": {
+      "main": [
+        [
+          {
+            "node": "Update Candidate Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Needs Review": {
+      "main": [
+        [
+          {
+            "node": "Update Candidate Result1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Not Eligible": {
+      "main": [
+        [
+          {
+            "node": "Update Candidate Result2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start Screening": {
+      "main": [
+        [
+          {
+            "node": "Fetch Candidate Records",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Candidate Records": {
+      "main": [
+        [
+          {
+            "node": "Validate Required Information",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Required Information": {
+      "main": [
+        [
+          {
+            "node": "Check Shortlist Eligibility",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Shortlist Eligibility": {
+      "main": [
+        [
+          {
+            "node": "Shortlisted",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Check Review Eligibility",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Review Eligibility": {
+      "main": [
+        [
+          {
+            "node": "Needs Review",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Not Eligible",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Candidate Result": {
+      "main": [
+        [
+          {
+            "node": "Send Shortlisted Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Candidate Result1": {
+      "main": [
+        [
+          {
+            "node": "Send Shortlisted Email1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Candidate Result2": {
+      "main": [
+        [
+          {
+            "node": "Send Shortlisted Email2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "618f44f1-9329-4a58-b6eb-10e289744744",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "80d1f578d8c9a68fb391899ef88abb9fd67ddafabcaa2a21da3f2c22313514cb"
+  },
+  "nodeGroups": [],
+  "id": "oyFkoAwFP9sMu5fs",
+  "tags": []
+}
