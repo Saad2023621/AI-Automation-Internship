@@ -1,0 +1,291 @@
+{
+  "name": "Sales - Lead Processing",
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e95d753e-6a1d-447e-bde7-e85543a15cb5",
+              "leftValue": "={{ $json.body.name }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "8841833b-947d-4919-a8a6-786fed5e0d51",
+              "leftValue": "={{ $json.body.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "01e1856f-f129-4334-b580-1b2429d7a902",
+              "leftValue": "={{ $json.body.company }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "c9318ad8-a1bb-4251-b9a3-8b4323a1be14",
+              "leftValue": "={{ $json.body.userId }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        128,
+        -80
+      ],
+      "id": "a525fe37-9153-453f-bc57-45e789814482",
+      "name": "Validate Lead Information"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lead-processing",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -80,
+        0
+      ],
+      "id": "50dfd925-1668-4701-b3c5-186ef5bb228f",
+      "name": "Receive New Lead",
+      "webhookId": "c08d1132-0130-47f0-990f-d8c1a91af972"
+    },
+    {
+      "parameters": {
+        "url": "=https://jsonplaceholder.typicode.com/users/{{$json.body.userId}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        416,
+        -96
+      ],
+      "id": "1e0fecba-a081-4821-806c-8c388448336d",
+      "name": "Enrich Lead Data"
+    },
+    {
+      "parameters": {
+        "sendTo": "saadh0910@gmail.com",
+        "subject": "=New Lead Received - {{ $json.Name}}",
+        "message": "=Hello Sales Team,  A new lead has been received and processed successfully.  Lead Details:  Name: {{ $('Receive New Lead').item.json.body.name }} Email: {{ $('Receive New Lead').item.json.body.email }} Company: {{ $('Receive New Lead').item.json.body.company }} User ID: {{ $('Receive New Lead').item.json.body.userId }}  External API Enrichment:  API Name: {{ $('Enrich Lead Data').item.json.name }} API Email: {{ $('Enrich Lead Data').item.json.email }}  The lead has been successfully validated, enriched using an external API, and saved to Google Sheets.  Please review the lead information.  Regards, Lead Processing Automation",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        832,
+        -96
+      ],
+      "id": "aafe66f3-ade6-45c8-badd-12ef0e9d7e78",
+      "name": "Notify Sales Team",
+      "webhookId": "3a8dd050-ce88-4259-a7e3-5987ea5ecb55",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "A5Mi3RfORjbbGfYd",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "18tk4-is0nAH-fANWtDo59rwSkH6rz36AobXwhbSN3c4",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18tk4-is0nAH-fANWtDo59rwSkH6rz36AobXwhbSN3c4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18tk4-is0nAH-fANWtDo59rwSkH6rz36AobXwhbSN3c4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $('Receive New Lead').item.json.body.name }}",
+            "Email": "={{ $('Receive New Lead').item.json.body.email }}",
+            "Company": "={{ $('Receive New Lead').item.json.body.company }}",
+            "UserID": "={{ $('Receive New Lead').item.json.body.userId }}",
+            "APIName": "={{ $('Enrich Lead Data').item.json.name }}",
+            "APIEmail": "={{ $('Enrich Lead Data').item.json.email }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "UserID",
+              "displayName": "UserID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "APIName",
+              "displayName": "APIName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "APIEmail",
+              "displayName": "APIEmail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        624,
+        -96
+      ],
+      "id": "be7f892f-fd2b-4d73-8884-3cc965bb1eb0",
+      "name": "Save Enriched Lead",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "paXt80vdHoeR07GD",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Receive New Lead": {
+      "main": [
+        [
+          {
+            "node": "Validate Lead Information",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Lead Information": {
+      "main": [
+        [
+          {
+            "node": "Enrich Lead Data",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Save Enriched Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enrich Lead Data": {
+      "main": [
+        [
+          {
+            "node": "Save Enriched Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Enriched Lead": {
+      "main": [
+        [
+          {
+            "node": "Notify Sales Team",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "d7aa478d-d4c7-4047-a4b1-662b71bfcc31",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "80d1f578d8c9a68fb391899ef88abb9fd67ddafabcaa2a21da3f2c22313514cb"
+  },
+  "nodeGroups": [],
+  "id": "gd9KAiXtWubiWosp",
+  "tags": []
+}
