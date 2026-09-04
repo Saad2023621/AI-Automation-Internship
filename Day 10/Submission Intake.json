@@ -1,0 +1,231 @@
+{
+  "name": "Submission Intake",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "form-submission",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "43da801e-ec88-4357-a237-dcd44a6ef75a",
+      "name": "Webhook",
+      "webhookId": "6a461249-e0c6-40fa-9a4f-b5e26eddc335"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "fab97170-3445-44a3-a418-32762f06b6af",
+              "leftValue": "={{ $json.body.name }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "a383c9a3-95f4-439b-8f25-405ddd407e04",
+              "leftValue": "={{ $json.body.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "235d2278-e25c-46ca-a727-6a2c17bf699b",
+              "leftValue": "={{ $json.body.department }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "8b24e930-102f-4922-9e57-e9ab0439f5d7",
+      "name": "Validate Submitted Information"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "18tk4-is0nAH-fANWtDo59rwSkH6rz36AobXwhbSN3c4",
+          "mode": "list",
+          "cachedResultName": "Form Submissions",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18tk4-is0nAH-fANWtDo59rwSkH6rz36AobXwhbSN3c4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18tk4-is0nAH-fANWtDo59rwSkH6rz36AobXwhbSN3c4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json.body.name }}",
+            "Department": "={{ $json.body.department }}",
+            "Message": "={{ $json.body.message }}",
+            "Email": "={{ $json.body.email }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Department",
+              "displayName": "Department",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Message",
+              "displayName": "Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        416,
+        -96
+      ],
+      "id": "657dcb02-8906-4d1f-8030-9d5ed6fbcd5a",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "paXt80vdHoeR07GD",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.Email }}",
+        "subject": "Form Submission Received",
+        "message": "=Hello {{ $json.body.name }},  Thank you for submitting the form.  We have successfully received your submission for the {{ $json.body.department }} department.  Your information has been recorded successfully.  Regards, Internship Automation System",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        624,
+        -96
+      ],
+      "id": "3b4013ed-6b76-4923-bfdc-c4525864b0a8",
+      "name": "Send Submission Confirmation",
+      "webhookId": "f543a289-81ee-45b4-8610-d338e7c0b85d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "A5Mi3RfORjbbGfYd",
+          "name": "Gmail account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Validate Submitted Information",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Submitted Information": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send Submission Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "41873945-eb58-45eb-9560-d469c7b3dd57",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "80d1f578d8c9a68fb391899ef88abb9fd67ddafabcaa2a21da3f2c22313514cb"
+  },
+  "nodeGroups": [],
+  "id": "fb2YW3PngQBYvqhy",
+  "tags": []
+}
