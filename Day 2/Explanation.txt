@@ -1,0 +1,11 @@
+Schedule Trigger
+
+The Schedule Trigger node automatically starts the workflow at a predefined time. It is configured to run every weekday and acts as the starting point of the automation.
+
+Edit Fields (Set)
+
+The Edit Fields node creates a custom field named message containing the reminder text. This information is passed to the next node for further processing.
+
+Gmail (Send Message)
+
+The Gmail node sends an email to the specified recipient using the message generated in the previous node. It completes the workflow by automatically delivering the daily internship reminder.
