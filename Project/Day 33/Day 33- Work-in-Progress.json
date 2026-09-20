@@ -1,0 +1,248 @@
+{
+  "name": "Day 33- Work-in-Progress",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "company-question",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c99fce67-9e97-4a27-81ea-f95927808c10",
+      "name": "Webhook",
+      "webhookId": "e0cd3e28-6fb7-493c-a633-eddd81b1efb6"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "23c399c3-3d60-45c0-99d5-8276035d6351",
+              "name": "Question",
+              "value": "={{ String($json.body?.question ?? '').trim() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "9ae1df5e-079e-4ee6-9acb-2aad1b9c0c43",
+      "name": "Prepare Input"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "3c3df1fc-a961-4f52-8e02-8abb70e65c25",
+              "leftValue": "={{ $json.Question.length > 0 && $json.Question.length <= 500 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        448,
+        0
+      ],
+      "id": "e9237a86-2418-43dc-ba73-f93c341196d8",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "04150888-0b78-4069-92ef-6061855c89b8",
+              "name": "Question",
+              "value": "={{ $json.Question }}",
+              "type": "string"
+            },
+            {
+              "id": "79331505-4922-41b8-8dfb-8b96e49247d3",
+              "name": "status",
+              "value": "pending",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        672,
+        -96
+      ],
+      "id": "5e5c822c-35ee-426f-b04e-be88d0ab9419",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "useCustomSchema": true,
+        "tableId": "company_queries",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "question",
+              "fieldValue": "={{ $json.Question }}"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "={{ $json.status }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        896,
+        -96
+      ],
+      "id": "6c1887cb-b1b1-4de0-8e0e-89eaabccdcd3",
+      "name": "Create a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "CAOJOoEVchbjExkv",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"message\": \"Question received successfully.\",\n  \"status\": \"Pending\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1120,
+        -96
+      ],
+      "id": "652f8dad-fac3-4d23-a599-3c52e4819e9c",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"error\": \"Question must contain between 1 and 500 characters.\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        672,
+        96
+      ],
+      "id": "3ddb7844-fb81-43ff-a52a-d5cb34e70794",
+      "name": "Respond to Webhook1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Prepare Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Input": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Create a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a row": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "e1c347e4-c928-4ab4-8e7d-8231845feb4f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "48108049fb5e850a90a580b25fd9d7c51335465873a63778489aac3b7f576dc0"
+  },
+  "nodeGroups": [],
+  "id": "6gFN9t0SXSvHTSa9",
+  "tags": []
+}
