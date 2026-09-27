@@ -1,0 +1,185 @@
+{
+  "name": "day 28",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "36e3aeba-0e1d-4a93-8c49-2c289596c64e",
+              "name": "customer_message",
+              "value": "My laptop arrived with a cracked screen. I want a refund.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        320,
+        48
+      ],
+      "id": "d773fc6c-7056-4588-96f2-467bdc2d0bbd",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Write a polite email approving a refund for this customer message: {{ $json.customer_message }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        480,
+        48
+      ],
+      "id": "540c5439-523a-46a1-bc63-fd7d3452b40f",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "qwen/qwen3.6-27b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        352,
+        256
+      ],
+      "id": "2378f043-38da-42d5-bfad-e091d6c6bac5",
+      "name": "Groq Chat Model"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5fb09852-1753-4725-82b2-2bb7f1be8a35",
+              "name": "ai_draft",
+              "value": "Drag and drop the text output from your AI node into this box.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        832,
+        64
+      ],
+      "id": "63f7cf87-de8f-4343-8738-14efa512fc1d",
+      "name": "ai_draft"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        112,
+        48
+      ],
+      "id": "60966f22-bd5d-4c88-affa-41199a59f32a",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "sendTo": "saadh0910@gmail.com",
+        "subject": "Action Required: AI Refund Draft Review",
+        "message": "=<p>The AI has generated the following draft for your review:</p>\n<blockquote style=\"background: #f4f4f4; padding: 10px;\">\n  <strong>\"{{ $json.ai_draft }}\"</strong>\n</blockquote>\n\n<p>Do you want to approve this action?</p>\n\n<p>\n  <a href=\"http://localhost:5678/webhook/cabaea33-01da-4e0f-acd0-b120c905fb73?status=approved\" style=\"background: green; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;\">\n    ✅ Approve\n  </a>\n  &nbsp;&nbsp;&nbsp;&nbsp;\n  <a href=\"http://localhost:5678/webhook/cabaea33-01da-4e0f-acd0-b120c905fb73?status=rejected\" style=\"background: red; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;\">\n    ❌ Reject\n  </a>\n</p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1040,
+        64
+      ],
+      "id": "0535b694-9030-49ff-8194-3cfec1393cc9",
+      "name": "Send a message1",
+      "webhookId": "ca072632-2cc3-496d-be3e-c554e7a96170"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "ai_draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ai_draft": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "0501db51-f1cf-4f8e-b5d5-7ca4fbcffd32",
+  "meta": {
+    "instanceId": "fcae47293cd893f9f6de99cfcca3f506952c62de3c0dcdedd6f08a15ef242858"
+  },
+  "nodeGroups": [],
+  "id": "YlAhZESIihVpvuUD",
+  "tags": [
+    {
+      "name": "Day 26",
+      "id": "HWB13CWjTzpFQ7uQ",
+      "updatedAt": "2026-09-08T16:33:46.230Z",
+      "createdAt": "2026-09-08T16:33:46.230Z"
+    }
+  ]
+}
