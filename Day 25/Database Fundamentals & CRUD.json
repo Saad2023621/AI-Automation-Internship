@@ -1,0 +1,217 @@
+{
+  "name": "Database Fundamentals & CRUD",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "3aac43bf-edc8-49f4-bcb2-2723edb849cd",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "tableId": "tickets",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "customer_name",
+              "fieldValue": "Ali Khan"
+            },
+            {
+              "fieldId": "email",
+              "fieldValue": "ali@example.com"
+            },
+            {
+              "fieldId": "category",
+              "fieldValue": "Support"
+            },
+            {
+              "fieldId": "priority",
+              "fieldValue": "High"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "Open"
+            },
+            {
+              "fieldId": "ai_summary",
+              "fieldValue": "Customer cannot access the dashboard."
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "13f056c8-4656-4fc7-b1a8-8d85aba5fa01",
+      "name": "Insert Ticket",
+      "credentials": {
+        "supabaseApi": {
+          "id": "dkcRp4JJrU7fLpyd",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "tickets",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "email",
+              "keyValue": "ali@example.com"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        448,
+        0
+      ],
+      "id": "5e5a4871-c4f4-4908-a2f9-88a0682c8bc1",
+      "name": "Read Ticket",
+      "credentials": {
+        "supabaseApi": {
+          "id": "dkcRp4JJrU7fLpyd",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "tickets",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "email",
+              "condition": "eq",
+              "keyValue": "ali@example.com"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "Resolved"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        672,
+        0
+      ],
+      "id": "ed460065-01ad-42a7-943f-fef1c3ba9a07",
+      "name": "Update a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "dkcRp4JJrU7fLpyd",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "tableId": "tickets",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "email",
+              "condition": "eq",
+              "keyValue": "Delete Test Ticket"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        896,
+        0
+      ],
+      "id": "47067c9c-0357-46eb-96a6-619f9604bb13",
+      "name": "Delete a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "dkcRp4JJrU7fLpyd",
+          "name": "Supabase account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Insert Ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Ticket": {
+      "main": [
+        [
+          {
+            "node": "Read Ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Ticket": {
+      "main": [
+        [
+          {
+            "node": "Update a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a row": {
+      "main": [
+        [
+          {
+            "node": "Delete a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "a5dcf937-cdfc-4426-8712-000e2d620e82",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fcae47293cd893f9f6de99cfcca3f506952c62de3c0dcdedd6f08a15ef242858"
+  },
+  "nodeGroups": [],
+  "id": "zj1mlC2IkT4IojMG",
+  "tags": []
+}
