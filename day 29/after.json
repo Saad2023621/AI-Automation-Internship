@@ -1,0 +1,309 @@
+{
+  "name": "after",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -592,
+        336
+      ],
+      "id": "0f7a2a98-1648-427e-b1af-25fac0e1d7be",
+      "name": "Gmail Trigger"
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $json.snippet }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "Sales",
+              "description": "Inquiries about buying products, pricing, or demos."
+            },
+            {
+              "category": "Support",
+              "description": "Technical issues, bugs, or requests for help using the product."
+            },
+            {
+              "category": "Complaint",
+              "description": "Description: Angry customers, refund demands, or negative feedback."
+            },
+            {
+              "category": "Invoice",
+              "description": "Description: Questions about billing, receipts, or payments."
+            },
+            {
+              "category": "Spam",
+              "description": "Description: Unsolicited marketing, newsletters, or irrelevant emails."
+            },
+            {
+              "category": "General",
+              "description": "Description: Any email that does not fit into the other specific categories."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1.1,
+      "position": [
+        -64,
+        272
+      ],
+      "id": "0b3e61c4-0de6-4eea-99fa-6baebd421626",
+      "name": "Text Classifier"
+    },
+    {
+      "parameters": {
+        "model": "whisper-large-v3-turbo",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -352,
+        656
+      ],
+      "id": "81f82424-0659-4eaa-a574-babfd1c7c5c0",
+      "name": "Groq Chat Model"
+    },
+    {
+      "parameters": {
+        "sendTo": "saadh0910@gmail.com",
+        "subject": "={{ $json.Subject }}",
+        "message": "={{ $json.From }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        672,
+        512
+      ],
+      "id": "cfd202b6-757d-4cbf-8582-1b46bdf2c7f4",
+      "name": "Send a message",
+      "webhookId": "ccf22e6a-7511-450a-bf0e-b1df9c6e4ca9"
+    },
+    {
+      "parameters": {
+        "operation": "addLabels"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        432,
+        656
+      ],
+      "id": "aee8335f-c9a3-496e-a9f3-e846b0a301bb",
+      "name": "Add label to message",
+      "webhookId": "f9997e1f-81cb-4b7d-b5d4-e8df69d453ca"
+    },
+    {
+      "parameters": {
+        "resource": "attachment",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.salesforce",
+      "typeVersion": 1.1,
+      "position": [
+        464,
+        320
+      ],
+      "id": "ac80c7aa-4e2d-4e60-98b3-c289507929be",
+      "name": "Create an attachment"
+    },
+    {
+      "parameters": {
+        "resource": "chat"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        336,
+        128
+      ],
+      "id": "f5a09bce-3f41-4540-b25a-d50370a300fb",
+      "name": "Get a chat",
+      "webhookId": "8428bed1-6892-4cad-8d95-ea2ce62cd743"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.subject }}",
+                    "rightValue": "\"Spam\"",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "0d4dec63-0afa-49fb-a16c-f31e3ada20df"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "0"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "9256a786-2ece-4b12-b1cb-ce6d53806249",
+                    "leftValue": "={{ $json.subject }}",
+                    "rightValue": "\"Invoice\"",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -432,
+        320
+      ],
+      "id": "980f760d-74e4-4cb5-b51e-2731f9c89c88",
+      "name": "Switch"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "node": "Create an attachment",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get a chat",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get a chat",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Add label to message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [],
+        [],
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "ef8253ca-5a93-42ca-b520-4519127a38b1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fcae47293cd893f9f6de99cfcca3f506952c62de3c0dcdedd6f08a15ef242858"
+  },
+  "nodeGroups": [],
+  "id": "YlAhZESIihVpvuUD",
+  "tags": [
+    {
+      "name": "Day 26",
+      "id": "HWB13CWjTzpFQ7uQ",
+      "updatedAt": "2026-09-08T16:33:46.230Z",
+      "createdAt": "2026-09-08T16:33:46.230Z"
+    }
+  ]
+}
