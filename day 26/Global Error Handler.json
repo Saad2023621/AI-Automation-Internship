@@ -1,0 +1,120 @@
+{
+  "name": "Global Error Handler",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "0a784200-2d45-4d26-98e4-1358f4f42565",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "tableId": "error_logs",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "execution_id",
+              "fieldValue": "={{ $json.execution.id }}"
+            },
+            {
+              "fieldId": "workflow_id",
+              "fieldValue": "={{ $json.workflow.id }}"
+            },
+            {
+              "fieldId": "workflow_name",
+              "fieldValue": "={{ $json.workflow.name }}"
+            },
+            {
+              "fieldId": "node_name",
+              "fieldValue": "={{ $json.execution.lastNodeExecuted }}"
+            },
+            {
+              "fieldId": "error_message",
+              "fieldValue": "={{ $json.execution.error.message }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "b7bedb1f-519b-49db-a5c8-9b7c7c397920",
+      "name": "Create a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "dkcRp4JJrU7fLpyd",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "saadh0910@gmail.com",
+        "subject": "Message configuration:",
+        "message": "=Workflow [{{ $('Error Trigger').item.json.workflow.name }}] failed! Error: {{ $('Error Trigger').item.json.execution.error.message }}\"",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "1d3710b1-0b82-4488-98e1-7633207883e1",
+      "name": "Send a message",
+      "webhookId": "5437a26d-05d5-4fc8-b279-4ca126a53551"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Create a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a row": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "01951078-61e5-4593-ae42-aa6fff01dbc1",
+  "meta": {
+    "instanceId": "fcae47293cd893f9f6de99cfcca3f506952c62de3c0dcdedd6f08a15ef242858"
+  },
+  "nodeGroups": [],
+  "id": "YlAhZESIihVpvuUD",
+  "tags": [
+    {
+      "name": "Day 26",
+      "id": "HWB13CWjTzpFQ7uQ",
+      "updatedAt": "2026-09-08T16:33:46.230Z",
+      "createdAt": "2026-09-08T16:33:46.230Z"
+    }
+  ]
+}
